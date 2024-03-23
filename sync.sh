@@ -54,7 +54,7 @@ fi
   --exact-timestamps \
   --cli-read-timeout 600 \
   --cli-connect-timeout 600 \
-  s3://fortressone-dats \
+  s3://qwtflive-dats \
   /updater/dats/
 
 # sync down maps
