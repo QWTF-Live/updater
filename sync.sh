@@ -17,6 +17,7 @@ url_encode() {
     echo "$encoded"
 }
 
+echo STEP 1
 if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
   if [ -n "${S3_STATS_URI}" ]; then
     for subdir in /updater/stats/*; do
@@ -26,6 +27,7 @@ if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "$
           filename=$(basename "$file")
           subdir_name=$(basename "$subdir")
 
+          echo PRE-COPY $file
           if /usr/local/bin/aws s3 cp "$file" "$S3_STATS_URI/$FO_REGION/$subdir_name/$filename"; then
             rm $file
 
@@ -37,6 +39,7 @@ if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "$
           else
             echo "Error syncing to $S3_STATS_URI/$FO_REGION/$subdir_name/$filename"
           fi
+          echo POST-COPY
         done
       fi
     done
@@ -48,6 +51,7 @@ if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "$
   fi
 fi
 
+echo STEP 2
 # sync down qwprogs
 /usr/local/bin/aws s3 sync \
   --no-sign-request \
@@ -57,6 +61,7 @@ fi
   s3://qwtflive-dats \
   /updater/dats/
 
+echo STEP 3
 # sync down maps
 /usr/local/bin/aws s3 sync \
   --size-only \
@@ -65,3 +70,4 @@ fi
   --cli-connect-timeout 600 \
   s3://fortressone-package \
   /updater/map-repo/fortress/maps/
+echo DONE
