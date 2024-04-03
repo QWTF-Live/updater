@@ -3,7 +3,7 @@
 printenv | grep -v "no_proxy" >> /etc/environment
 
 # Run sync on init
-source sync.sh
+source sync.sh -a
 
 # Run when fosv makes upload_ready file
 inotifywait -m /updater/stats/ --recursive --event create --format '%w%f' |
@@ -11,6 +11,6 @@ inotifywait -m /updater/stats/ --recursive --event create --format '%w%f' |
     if [[ $(basename "${file}") == "upload_ready" ]]; then
       rm "${file}"
       echo "Deleted upload_ready file: ${file}"
-      source sync.sh
+      source sync.sh -s -p
     fi
   done
