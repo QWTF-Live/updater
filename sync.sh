@@ -77,15 +77,16 @@ sync_maps() {
     --cli-connect-timeout 600 \
     s3://fortressone-package \
     /updater/map-repo/fortress/maps/
-  }
+}
 
+echo Start $(date) [$@]
 aws configure set s3.max_concurrent_requests 1
 while getopts "psmda" option; do
   case $option in
-    p)
-      sync_progs;;
     s)
       sync_stats;;
+    p)
+      sync_progs;;
     m)
       sync_maps;;
     d)
@@ -97,3 +98,4 @@ while getopts "psmda" option; do
       sync_demos;;
   esac
 done
+echo Finish $(date)
