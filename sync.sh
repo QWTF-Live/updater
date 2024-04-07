@@ -18,6 +18,7 @@ url_encode() {
 }
 
 sync_stats() {
+  return 0
   echo sync stats
   if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
     if [ -n "${S3_STATS_URI}" ]; then
@@ -47,6 +48,7 @@ sync_stats() {
 }
 
 sync_demos() {
+  return 0
   echo sync demos
   if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
     if [ -n "${S3_DEMO_URI}" ]; then
