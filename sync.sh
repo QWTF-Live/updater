@@ -18,33 +18,20 @@ url_encode() {
 }
 
 sync_stats() {
-  return 0
   echo sync stats
-  if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
-    if [ -n "${S3_STATS_URI}" ]; then
-      for subdir in /updater/stats/*; do
-        if [[ -d "$subdir" ]]; then
-          for file in "$subdir"/*.json; do
-            [ -e "$file" ] || continue
-            filename=$(basename "$file")
-            subdir_name=$(basename "$subdir")
 
-            if /usr/local/bin/aws s3 cp "$file" "$S3_STATS_URI/$FO_REGION/$subdir_name/$filename"; then
-              rm $file
+  for subdir in /updater/stats/*; do
+    if [[ -d "$subdir" ]]; then
+      for file in "$subdir"/*.json; do
+        [ -e "$file" ] || continue
+        filename=$(basename "$file")
+        subdir_name=$(basename "$subdir")
 
-              # Notify haze stats
-              if [ -n "${FO_STATS_FILES_ADDRESS}" ]; then
-                curl "$FO_STATS_FILES_ADDRESS/notify/$FO_REGION/$subdir_name/$(url_encode "$filename")"
-                echo "$FO_STATS_FILES_ADDRESS/notify/$FO_REGION/$subdir_name/$(url_encode "$filename")" notification sent
-              fi
-            else
-              echo "Error syncing to $S3_STATS_URI/$FO_REGION/$subdir_name/$filename"
-            fi
-          done
-        fi
+        echo Posting: $file
+        curl -X POST -d @$file "stats.qwtf.live:5000/stats/upload?shard=${subdir_name}&region=${FO_REGION}" && mv $file $file.done
       done
     fi
-  fi
+  done
 }
 
 sync_demos() {
