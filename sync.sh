@@ -28,7 +28,11 @@ sync_stats() {
         subdir_name=$(basename "$subdir")
 
         echo Posting: $file
-        curl -X POST -d @$file "stats.qwtf.live:5000/stats/upload?shard=${subdir_name}&region=${FO_REGION}" && mv $file $file.done
+        if [[ "${subdir_name}" == "tourney" ]]; then
+          curl -X POST -d @$file "stats.qwtf.live:5000/stats/upload?shard=${subdir_name}&region=${FO_REGION}" && mv $file $file.done
+        else
+          curl -X POST -d @$file "stats.qwtf.live:5000/api/upload_stats" && mv $file $file.done
+        fi
       done
     fi
   done
