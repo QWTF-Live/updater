@@ -13,4 +13,5 @@ RUN apt-get update \
 COPY file_placeholders/ /updater/
 COPY entrypoint.sh /updater
 COPY sync.sh /updater
+COPY godaddy-ddns.sh /updater
 CMD ["./entrypoint.sh"]

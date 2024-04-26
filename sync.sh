@@ -68,6 +68,11 @@ sync_maps() {
     /updater/map-repo/fortress/maps/
 }
 
+sync_dns() {
+  echo sync dns
+  ./godaddy-ddns.sh
+}
+
 echo Start $(date) [$@]
 aws configure set s3.max_concurrent_requests 1
 while getopts "psmda" option; do
@@ -81,6 +86,7 @@ while getopts "psmda" option; do
     d)
       sync_demos;;
     a)
+      sync_dns;
       sync_progs;
       sync_stats;
       sync_maps;
