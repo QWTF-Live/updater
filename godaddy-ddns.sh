@@ -56,7 +56,8 @@ CheckURL=https://api.ipify.org
 # End settings
 
 function onfail {
-   exit 1
+   exit 0
+#   exit 1
 }
 
 function onsuccess {
@@ -115,4 +116,5 @@ else
   echo "Current 'Public IP' matches 'Cached IP' recorded. No update required!"
   onsuccess
 fi
-exit $?
+exit 0
+# exit $?
