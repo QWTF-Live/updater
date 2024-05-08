@@ -14,6 +14,6 @@ inotifywait -m /updater/stats/*/upload_ready -e modify --format '%w' |
   while read -r file; do
     if [[ $(basename "${file}") == "upload_ready" ]]; then
       echo PING $file
-      ./sync.sh -s -p
+      ./sync.sh -s -p -m
     fi
   done
