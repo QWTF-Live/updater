@@ -70,7 +70,7 @@ sync_maps() {
 
 sync_dns() {
   echo sync dns
-  ./godaddy-ddns.sh
+  ./cf-ddns.sh
 }
 
 echo Start $(date) [$@]
