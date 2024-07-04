@@ -28,7 +28,7 @@ sync_stats() {
         subdir_name=$(basename "$subdir")
 
         echo Posting: $file
-        curl -X POST -d @$file "stats.qwtf.live:5000/api/upload_stats" && mv $file $file.done
+        curl -X POST -d @$file "logs.qwtf.live/api/upload_stats" && mv $file $file.done
       done
     fi
   done
