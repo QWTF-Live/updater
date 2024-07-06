@@ -35,11 +35,10 @@ sync_stats() {
 }
 
 sync_demos() {
-  return 0
   echo sync demos
   if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
     if [ -n "${S3_DEMO_URI}" ]; then
-      /usr/local/bin/aws s3 sync \
+      /usr/local/bin/aws s3 sync --exclude 'duel/*' \
         /updater/demos/ "${S3_DEMO_URI}/${FO_REGION}/" \
         && find /updater/demos/ \( -name "*.mvd" -o -name "*.gz" \) -type f -mtime +6 -delete 2>/dev/null
     fi
