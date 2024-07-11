@@ -32,6 +32,7 @@ sync_stats() {
       done
     fi
   done
+  find /updater/stats -type f -mtime +20 -name '*.done' -delete 2> /dev/null
 }
 
 sync_demos() {
