@@ -11,7 +11,7 @@ proxy="false"                                       # Set the proxy to true or f
 sitename=""                                         # Title of site "Example Site"
 slackchannel=""                                     # Slack Channel #example
 slackuri=""                                         # URI for Slack WebHook "https://hooks.slack.com/services/xxxxx"
-discorduri="https://discord.com/api/webhooks/1237689537950388235/QUchyLnkxDj_n2qRpLyWg0eMnZHzqY2GWilH58Ah7z-rzPJq8HDzkm7oaTRUmJi3WwK7"
+discorduri="https://discord.com/api/webhooks/1301596773302665287/e8V8PDNJkZ2jZ5DWFolGo3drMpYgPO12lpoQAVH9mQZPe2m0e8TfACYWrWlEFuXUzUj7"
 
 ###########################################
 ## Check if we have a public IP
