@@ -38,7 +38,10 @@ sync_stats() {
 
 sync_demos() {
   echo sync demos
-  if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${TF_REGION}" ]; then
+  # TFL_DOMAIN rather than a region variable of its own: the short name is
+  # already on every host in tfl_host.env, and the old one was only ever a
+  # copy of it. Same value, so the S3 keys are unchanged.
+  if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${TFL_DOMAIN}" ]; then
     if [ -n "${S3_DEMO_URI}" ]; then
       # One sync per shard rather than one over a demos/ tree: the demos now sit
       # under each shard's homedir, and syncing them individually keeps the S3
@@ -48,7 +51,7 @@ sync_demos() {
         [ -d "$subdir/fortress/demos" ] || continue
         [ "$shard" = duel ] && continue   # duel demos are not published
         /usr/local/bin/aws s3 sync \
-          "$subdir/fortress/demos/" "${S3_DEMO_URI}/${TF_REGION}/${shard}/" \
+          "$subdir/fortress/demos/" "${S3_DEMO_URI}/${TFL_DOMAIN}/${shard}/" \
           && find "$subdir/fortress/demos/" \( -name "*.mvd" -o -name "*.gz" \) -type f -mtime +6 -delete 2>/dev/null
       done
     fi
