@@ -2,7 +2,7 @@
 set -e
 set -o pipefail
 
-# Every shard's writable tree, one directory each. See fo-shard(1) in qwtfsv.
+# Every shard's writable tree, one directory each. See tf-shard(1) in qwtfsv.
 SHARDS=/srv/shards
 
 url_encode() {
