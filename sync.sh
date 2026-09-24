@@ -2,6 +2,9 @@
 set -e
 set -o pipefail
 
+# Every shard's writable tree, one directory each. See fo-shard(1) in qwtfsv.
+SHARDS=/srv/shards
+
 url_encode() {
     local encoded=""
     local char=""
@@ -20,28 +23,34 @@ url_encode() {
 sync_stats() {
   echo sync stats
 
-  for subdir in /updater/stats/*; do
-    if [[ -d "$subdir" ]]; then
-      for file in "$subdir"/*.json; do
+  for subdir in "$SHARDS"/*; do
+    if [[ -d "$subdir/fortress/data" ]]; then
+      for file in "$subdir"/fortress/data/*.json; do
         [ -e "$file" ] || continue
-        filename=$(basename "$file")
-        subdir_name=$(basename "$subdir")
 
         echo Posting: $file
         curl -X POST -d @$file "logs.qwtf.live/api/upload_stats" && mv $file $file.done
       done
     fi
   done
-  find /updater/stats -type f -mtime +20 -name '*.done' -delete 2> /dev/null
+  find "$SHARDS" -type f -mtime +20 -name '*.done' -delete 2> /dev/null
 }
 
 sync_demos() {
   echo sync demos
-  if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${FO_REGION}" ]; then
+  if [ -n "${AWS_SECRET_ACCESS_KEY}" ] && [ -n "${AWS_ACCESS_KEY_ID}" ] && [ -n "${TF_REGION}" ]; then
     if [ -n "${S3_DEMO_URI}" ]; then
-      /usr/local/bin/aws s3 sync --exclude 'duel/*' \
-        /updater/demos/ "${S3_DEMO_URI}/${FO_REGION}/" \
-        && find /updater/demos/ \( -name "*.mvd" -o -name "*.gz" \) -type f -mtime +6 -delete 2>/dev/null
+      # One sync per shard rather than one over a demos/ tree: the demos now sit
+      # under each shard's homedir, and syncing them individually keeps the S3
+      # keys at <region>/<shard>/<file> exactly as they were.
+      for subdir in "$SHARDS"/*; do
+        shard=$(basename "$subdir")
+        [ -d "$subdir/fortress/demos" ] || continue
+        [ "$shard" = duel ] && continue   # duel demos are not published
+        /usr/local/bin/aws s3 sync \
+          "$subdir/fortress/demos/" "${S3_DEMO_URI}/${TF_REGION}/${shard}/" \
+          && find "$subdir/fortress/demos/" \( -name "*.mvd" -o -name "*.gz" \) -type f -mtime +6 -delete 2>/dev/null
+      done
     fi
   fi
 }
@@ -54,7 +63,7 @@ sync_progs() {
     --cli-read-timeout 600 \
     --cli-connect-timeout 600 \
     s3://qwtflive-dats \
-    /updater/dats/
+    /srv/dats/
 }
 
 sync_maps() {
@@ -65,7 +74,7 @@ sync_maps() {
     --cli-read-timeout 600 \
     --cli-connect-timeout 600 \
     s3://fortressone-package \
-    /updater/map-repo/fortress/maps/
+    /srv/assets/maps/
 }
 
 sync_dns() {
